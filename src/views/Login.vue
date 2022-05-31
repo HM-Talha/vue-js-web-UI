@@ -1,0 +1,263 @@
+<script setup>
+import { RouterLink, RouterView } from "vue-router";
+</script>
+
+<template>
+  <div class="container">
+    <div class="form-container">
+      <form>
+        <h1>Log in</h1>
+        <div class="Show">
+          <input v-model="email" type="email" placeholder="Email" />
+          <div></div>
+          <input v-model="password" type="password" placeholder="Password" />
+          <p>show</p>
+        </div>
+        <button @click="login">Log In</button>
+      </form>
+    </div>
+  </div>
+</template>
+
+<script>
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import router from "../router/index";
+export default {
+  data() {
+    return {
+      email: "",
+      password: "",
+    };
+  },
+  methods: {
+    login(e) {
+      e.preventDefault();
+      const auth = getAuth();
+      signInWithEmailAndPassword(auth, this.email, this.password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log(user);
+          localStorage.setItem("uid", user?.uid);
+          alert("Loged In");
+          router.push({ path: "/home" });
+
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          alert(errorMessage);
+          // ..
+        });
+    },
+  },
+};
+</script>
+
+<style scoped>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: #f6f5f7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-family: "Montserrat", sans-serif;
+  height: 100vh;
+  margin: -20px 0 50px;
+}
+
+h1 {
+  /* position: absolute; */
+
+  /* UI - 30 Semi */
+
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 36px;
+  text-align: center;
+
+  /* Black */
+
+  color: #000000;
+}
+
+h2 {
+  text-align: center;
+}
+
+p {
+  font-size: 14px;
+  font-weight: 100;
+  line-height: 20px;
+  letter-spacing: 0.5px;
+  margin: 20px;
+}
+
+span {
+  font-size: 12px;
+}
+
+a {
+  color: #333;
+  font-size: 14px;
+  text-decoration: none;
+  margin: 15px 0;
+}
+
+button {
+  border-radius: 20px;
+  border: 1px solid #0c0908;
+  background-color: #0f0e0e;
+  color: #ffffff;
+  font-size: 12px;
+  margin: 10px;
+  font-weight: bold;
+  padding: 12px 100px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: transform 80ms ease-in;
+  border-radius: 100px;
+}
+button:active {
+  transform: scale(0.95);
+}
+
+button:focus {
+  outline: none;
+}
+
+button.ghost {
+  background-color: transparent;
+  border-color: #ffffff;
+}
+
+form {
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0 50px;
+  height: 100%;
+  text-align: center;
+}
+.Show {
+  display: flex;
+  position: relative;
+  margin-left: 200px;
+  width: 600px;
+  justify-content: center;
+  flex-direction: column;
+}
+p {
+  position: absolute;
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  color: #000000;
+  /* text-align: center; */
+  top: 60px;
+  right: 220px;
+}
+
+input {
+  background-color: #eee;
+  border: none;
+  padding: 12px 30px;
+  margin: 10px;
+  width: 60%;
+}
+
+.container {
+  background-color: #fff;
+  /* border-radius: 10px;
+  	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 
+			0 10px 10px rgba(0,0,0,0.22); */
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100vh;
+  /* max-width: 100%;
+	//min-height: 480px; */
+  display: flex;
+  justify-content: center;
+}
+
+.form-container {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  transition: all 0.6s ease-in-out;
+  display: flex;
+  justify-content: center;
+}
+
+.sign-in-container {
+  left: 0;
+  width: 50%;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+}
+
+@keyframes show {
+  0%,
+  49.99% {
+    opacity: 0;
+    z-index: 1;
+  }
+
+  50%,
+  100% {
+    opacity: 1;
+    z-index: 5;
+  }
+}
+
+.overlay-container {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  transition: transform 0.6s ease-in-out;
+  z-index: 100;
+}
+
+.container.right-panel-active .overlay-container {
+  transform: translateX(-100%);
+}
+
+.overlay {
+  background: #ff416c;
+  background: -webkit-linear-gradient(to right, #ff4b2b, #ff416c);
+  background: linear-gradient(to right, #ff4b2b, #ff416c);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 0 0;
+  color: #ffffff;
+  position: relative;
+  left: -100%;
+  height: 100%;
+  width: 200%;
+  transform: translateX(0);
+  transition: transform 0.6s ease-in-out;
+}
+
+.container.right-panel-active .overlay {
+  transform: translateX(50%);
+}
+</style>
